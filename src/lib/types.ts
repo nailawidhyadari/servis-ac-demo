@@ -33,6 +33,9 @@ export type Appt = {
   duration: number; // menit kerja, tanpa jeda perjalanan
   status: Status;
   notes: string;
+  transport?: number;
+  discount?: number;
+  paid?: boolean;
   createdAt: number;
 };
 

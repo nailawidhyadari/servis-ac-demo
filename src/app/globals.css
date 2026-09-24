@@ -32,7 +32,9 @@ body {
   background-image: radial-gradient(rgba(15, 27, 45, 0.09) 1px, transparent 1px);
   background-size: 18px 18px;
   overscroll-behavior-y: none;
+  overflow-x: clip;
 }
+.grid > *, main, main > * { min-width: 0; }
 
 .card {
   background: var(--card);

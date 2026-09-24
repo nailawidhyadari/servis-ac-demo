@@ -51,14 +51,14 @@ export default function Beranda() {
         <Stat label="Janji hari ini" value={d.todays.length} hint={`${d.tmr} janji besok`} tint="var(--lime)" />
         <Stat label="Teknisi kosong" value={`${d.freeNow}/${techs.length}`} hint="sedang tidak di lokasi" tint="var(--frost)" />
         <Stat label="Belum konfirmasi" value={d.unconfirmed.length} hint="perlu dikabari via WA" tint="#ffe9a8" />
-        <Stat label="Estimasi omzet" value={<span className="text-2xl md:text-3xl">{rupiah(d.revenue)}</span>} hint="dari janji hari ini" tint="#ffd0c7" />
+        <Stat label="Estimasi omzet" value={<span className="text-xl sm:text-2xl md:text-3xl">{rupiah(d.revenue)}</span>} hint="dari janji hari ini" tint="#ffd0c7" />
       </section>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.3fr_1fr]">
         <section>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-display text-2xl font-extrabold">Urutan kerja hari ini</h2>
-            <Link href="/jadwal" className="text-sm font-bold underline decoration-2 underline-offset-4">Lihat papan jadwal →</Link>
+            <h2 className="font-display text-xl font-extrabold sm:text-2xl">Urutan kerja hari ini</h2>
+            <Link href="/jadwal" className="shrink-0 whitespace-nowrap text-sm font-bold underline decoration-2 underline-offset-4">Papan jadwal →</Link>
           </div>
           <div className="flex flex-col gap-2.5">
             {d.todays.length === 0 && <p className="card-flat p-5 text-soft">Hari ini kosong. Waktunya tawarin paket rutin ke pelanggan lama.</p>}

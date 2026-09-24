@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { fmtDate, fmtTime, rupiah } from "@/lib/schedule";
@@ -16,13 +16,13 @@ export default function Page() {
 
 function Invoice() {
   const id = useSearchParams().get("id");
-  const { appts, services, techs, settings } = useStore();
+  const { appts, services, techs, settings, updateAppt } = useStore();
   const a = appts.find((x) => x.id === id);
-  const [discount, setDiscount] = useState(0);
-  const [transport, setTransport] = useState(0);
-  const [paid, setPaid] = useState(false);
 
   if (!a) return <p className="p-6">Janji tidak ditemukan. <Link className="underline" href="/jadwal">Kembali</Link></p>;
+  const transport = a.transport ?? 0;
+  const discount = a.discount ?? 0;
+  const paid = a.paid ?? false;
   const svc = services.find((s) => s.id === a.serviceId);
   const tech = techs.find((t) => t.id === a.techId);
   const sub = (svc?.price ?? 0) * a.units;
@@ -86,10 +86,10 @@ function Invoice() {
         <button className="btn" onClick={() => window.print()}>🖨️ Cetak</button>
         <div className="flex items-center gap-2">
           <label className="label !mb-0" htmlFor="tr">Transport</label>
-          <input id="tr" type="number" inputMode="numeric" className="field !min-h-9 w-28" value={transport || ""} onChange={(e) => setTransport(+e.target.value)} placeholder="0" />
+          <input id="tr" type="number" inputMode="numeric" className="field !min-h-9 w-28" value={transport || ""} onChange={(e) => updateAppt(a.id, { transport: Math.max(0, +e.target.value) })} placeholder="0" />
           <label className="label !mb-0" htmlFor="ds">Diskon</label>
-          <input id="ds" type="number" inputMode="numeric" className="field !min-h-9 w-28" value={discount || ""} onChange={(e) => setDiscount(+e.target.value)} placeholder="0" />
-          <button className="chip" data-on={paid} onClick={() => setPaid(!paid)}>Lunas</button>
+          <input id="ds" type="number" inputMode="numeric" className="field !min-h-9 w-28" value={discount || ""} onChange={(e) => updateAppt(a.id, { discount: Math.max(0, +e.target.value) })} placeholder="0" />
+          <button className="chip" data-on={paid} onClick={() => updateAppt(a.id, { paid: !paid })}>Lunas</button>
         </div>
       </div>
 
