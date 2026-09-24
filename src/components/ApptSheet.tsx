@@ -54,6 +54,7 @@ export function ApptSheet({ appt, onClose }: { appt: Appt | null; onClose: () =>
         <a className="btn" target="_blank" rel="noreferrer" href={waLink(appt.phone, waMessage(appt, svc?.name ?? "service AC", settings.company, tech?.name ?? "kami", appt.status === "baru" ? "konfirmasi" : "ingat"))}>
           💬 {appt.status === "baru" ? "Kirim konfirmasi" : "Ingatkan via WA"}
         </a>
+        <Link className="btn" href={`/invoice?id=${appt.id}`}>🧾 Invoice</Link>
         {!closed && <Link className="btn" href={`/janji?edit=${appt.id}`}>Ubah jadwal</Link>}
         {!closed && <button className="btn btn-coral" onClick={() => { if (confirm("Batalkan janji ini? Slot langsung kosong lagi.")) { setStatus(appt.id, "batal"); onClose(); } }}>Batalkan</button>}
         {appt.status === "batal" && <button className="btn" onClick={() => { setStatus(appt.id, "baru"); onClose(); }}>Aktifkan lagi</button>}

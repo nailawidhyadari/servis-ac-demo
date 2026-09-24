@@ -36,9 +36,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const isOn = (h: string) => (h === "/" ? path === "/" : path.startsWith(h));
 
   return (
-    <div className="mx-auto min-h-dvh max-w-[1400px] md:grid md:grid-cols-[88px_1fr] lg:grid-cols-[250px_1fr]">
+    <div className="mx-auto min-h-dvh max-w-[1400px] print:block md:grid md:grid-cols-[88px_1fr] lg:grid-cols-[250px_1fr]">
       {/* Sidebar: tablet = rail ikon, laptop = penuh */}
-      <aside className="sticky top-0 hidden h-dvh flex-col gap-6 border-r-2 border-ink px-3 py-6 md:flex lg:px-5">
+      <aside className="sticky top-0 hidden print:!hidden h-dvh flex-col gap-6 border-r-2 border-ink px-3 py-6 md:flex lg:px-5">
         <Link href="/" className="flex items-center gap-3 px-1">
           <Logo />
           <span className="hidden lg:block">
@@ -73,7 +73,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       <div className="min-w-0 pb-28 md:pb-10">
         {/* Bar atas HP */}
-        <header className="flex items-center justify-between px-4 pt-4 md:hidden">
+        <header className="flex items-center justify-between px-4 pt-4 md:hidden print:hidden">
           <Link href="/" className="flex items-center gap-2">
             <Logo size={34} />
             <span className="font-display text-xl font-extrabold">Sejukin</span>
@@ -84,7 +84,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Nav bawah HP */}
-      <nav className="safe-b fixed inset-x-0 bottom-0 z-40 border-t-2 border-ink bg-card md:hidden" aria-label="Menu utama">
+      <nav className="safe-b fixed inset-x-0 bottom-0 z-40 border-t-2 border-ink bg-card md:hidden print:hidden" aria-label="Menu utama">
         <ul className="mx-auto grid max-w-md grid-cols-5">
           {[nav[0], nav[1], null, nav[2], nav[4]].map((n, i) =>
             n ? (
