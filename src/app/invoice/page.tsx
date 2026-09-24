@@ -29,11 +29,61 @@ function Invoice() {
   const total = Math.max(0, sub + transport - discount);
   const no = `INV/${a.date.replaceAll("-", "")}/${a.id.replace(/\D/g, "").padStart(3, "0").slice(-3) || a.id.slice(-3).toUpperCase()}`;
 
+  async function download() {
+    if (!a) return;
+    const { jsPDF } = await import("jspdf");
+    const d = new jsPDF({ unit: "pt", format: "a4" });
+    const W = d.internal.pageSize.getWidth();
+    const L = 48, R = W - 48;
+    let y = 60;
+    d.setFont("helvetica", "bold").setFontSize(20).text(settings.company, L, y);
+    d.setFontSize(26).text("INVOICE", R, y, { align: "right" });
+    y += 18;
+    d.setFont("helvetica", "normal").setFontSize(10).text("Jasa service & instalasi AC", L, y);
+    d.setFont("courier", "normal").text(no, R, y, { align: "right" });
+    y += 14;
+    d.setFont("helvetica", "bold").text(paid ? "LUNAS" : "BELUM DIBAYAR", R, y, { align: "right" });
+    y += 16;
+    d.setLineWidth(1.5).line(L, y, R, y);
+    y += 26;
+    d.setFontSize(8).text("DITAGIHKAN KE", L, y).text("PENGERJAAN", R, y, { align: "right" });
+    y += 15;
+    d.setFontSize(11).text(a.customer, L, y).text(`${fmtDate(a.date)}, ${fmtTime(a.start)}-${fmtTime(a.start + a.duration)}`, R, y, { align: "right" });
+    y += 14;
+    d.setFont("helvetica", "normal").setFontSize(10).text(d.splitTextToSize(a.address, 240), L, y).text(`Teknisi: ${tech?.name ?? "-"}`, R, y, { align: "right" });
+    y += 14;
+    d.text(a.phone, L, y);
+    y += 30;
+    d.setFont("helvetica", "bold").setFontSize(8);
+    d.line(L, y - 12, R, y - 12).text("LAYANAN", L, y).text("UNIT", R - 190, y, { align: "right" }).text("HARGA", R - 100, y, { align: "right" }).text("JUMLAH", R, y, { align: "right" });
+    d.line(L, y + 8, R, y + 8);
+    y += 28;
+    const row = (label: string, unit: string, price: string, amt: string, bold = false) => {
+      d.setFont("helvetica", bold ? "bold" : "normal").setFontSize(10.5).text(label, L, y);
+      if (unit) d.text(unit, R - 190, y, { align: "right" });
+      if (price) d.text(price, R - 100, y, { align: "right" });
+      d.text(amt, R, y, { align: "right" });
+      y += 22;
+    };
+    row(svc?.name ?? "Layanan", String(a.units), rupiah(svc?.price ?? 0), rupiah(sub), true);
+    if (transport > 0) row("Transport", "", "", rupiah(transport));
+    if (discount > 0) row("Diskon", "", "", "-" + rupiah(discount));
+    y += 6;
+    d.setFillColor(210, 243, 106).setDrawColor(15, 27, 45).setLineWidth(1.5).roundedRect(L, y, R - L, 46, 10, 10, "FD");
+    d.setFont("helvetica", "bold").setFontSize(11).text("TOTAL", L + 16, y + 28);
+    d.setFontSize(20).text(rupiah(total), R - 16, y + 31, { align: "right" });
+    y += 76;
+    if (a.notes) { d.setFontSize(10).text("Catatan: ", L, y); d.setFont("helvetica", "normal").text(d.splitTextToSize(a.notes, R - L - 50), L + 46, y); y += 24; }
+    d.setFont("helvetica", "normal").setFontSize(9).setTextColor(90, 100, 120).text(`Terima kasih sudah mempercayakan AC Anda kepada ${settings.company}. Garansi pengerjaan 7 hari.`, W / 2, y + 20, { align: "center" });
+    d.save(`${no.replaceAll("/", "-")}-${a.customer.replace(/\s+/g, "_")}.pdf`);
+  }
+
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-5 flex flex-wrap items-center gap-3 print:hidden">
         <Link href="/jadwal" className="btn btn-sm">← Kembali</Link>
-        <button className="btn btn-lime" onClick={() => window.print()}>🖨️ Cetak / Simpan PDF</button>
+        <button className="btn btn-lime" onClick={download}>⬇️ Download PDF</button>
+        <button className="btn" onClick={() => window.print()}>🖨️ Cetak</button>
         <div className="flex items-center gap-2">
           <label className="label !mb-0" htmlFor="tr">Transport</label>
           <input id="tr" type="number" inputMode="numeric" className="field !min-h-9 w-28" value={transport || ""} onChange={(e) => setTransport(+e.target.value)} placeholder="0" />
